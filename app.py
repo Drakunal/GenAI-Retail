@@ -61,8 +61,17 @@ product_id INT AUTO_INCREMENT PRIMARY KEY,
     WHERE brand = 'Nike' AND category = 'shirt';
     also the sql code should not have ``` in beginning or end and sql word in output
     \nExample 4 - In which aisle is pantene shampoo present, 
-    the SQL command will be something like this Select aisle_number from products where
-    brand = "Pantene" AND product_name = "shampoo"
+    the SQL command will be something like this SELECT aisle_number 
+        FROM products 
+        WHERE brand = 'Pantene' 
+        AND aisle_number = (
+            SELECT aisle_number 
+            FROM products 
+            WHERE product_name LIKE '%shampoo%' 
+            OR category LIKE '%shampoo%' 
+            OR sub_category LIKE '%shampoo%'
+        );
+
     """
 
 
