@@ -15,7 +15,7 @@ mydb = mysql.connector.connect(
     host = os.getenv("host"),
     user = os.getenv("user"),
     password = os.getenv("password"),
-    database = "retail_store"
+    database = "retail_store2"
 )
 
 ## Function To Load Google Gemini Model and provide queries as response
@@ -39,7 +39,18 @@ prompt=[
     """
     You are an expert in converting English questions to SQL query!
     The SQL database has the table named products and has the following columns - 
-product_id, product_name, category, price, quantity_left, brand, description 
+product_id INT AUTO_INCREMENT PRIMARY KEY,
+    product_name VARCHAR(255) NOT NULL,
+    brand VARCHAR(100),
+    category VARCHAR(100),
+    sub_category VARCHAR(100),
+    price_per_unit DECIMAL(10, 2) NOT NULL,
+    amount_left_in_inventory INT NOT NULL,
+    aisle_number INT,
+    weight DECIMAL(10, 2),
+    country_of_origin VARCHAR(100),
+    manufacturer VARCHAR(100),
+    supplier VARCHAR(100).
 \n\nFor example,\nExample 1 - How many entries of records are present?, 
     the SQL command will be something like this SELECT COUNT(*) FROM products ;
     \nExample 2 - Tell me all the products which are from the brand Nike, 
@@ -49,7 +60,9 @@ product_id, product_name, category, price, quantity_left, brand, description
     the SQL command will be something like this SELECT price, product_name FROM products
     WHERE brand = 'Nike' AND category = 'shirt';
     also the sql code should not have ``` in beginning or end and sql word in output
-
+    \nExample 4 - In which aisle is pantene shampoo present, 
+    the SQL command will be something like this Select aisle_number from products where
+    brand = "Pantene" AND product_name = "shampoo"
     """
 
 
