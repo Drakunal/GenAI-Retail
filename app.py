@@ -81,9 +81,9 @@ product_id INT AUTO_INCREMENT PRIMARY KEY,
             OR category LIKE '%shampoo%' 
             OR sub_category LIKE '%shampoo%'
         );
-        \nExample 5 - In which aisle will I get the product with category or sub category or product name as Toothpaste
+        \nExample 5 - Show me the brand, product name and amount_left_in_inventory and also aisle number where I can get the product with category or sub category or product name as Toothpaste
         the SQL command will be something like this 
-            SELECT aisle_number 
+            SELECT product_name,brand,amount_left_in_inventory,aisle_number 
             FROM products 
             WHERE product_name LIKE '%toothpaste%' 
             OR category LIKE '%toothpaste%' 
@@ -101,11 +101,14 @@ st.header("Retail Store LLM")
 
 image_question = "what is the thing in this image? Give one word answer only. Make it a general answer. Do not give brand name. "
 # question=st.text_input("Input: ",key="input")
-question = "In which aisle will I get the product with category or sub category or product name as "
+question = "Show me the brand, product name and amount_left_in_inventory and also aisle number where I can get the product with category or sub category or product name as "
 uploaded_file = st.file_uploader("Upload an image")
-answer = "The item is available at aisle number: "
 image=""  
-
+md = """
+| Product Name  | Brand | Inventory | Aisle number |
+| :------------ | :--------------- | :---------------| :---------------|
+| 
+"""
 if uploaded_file is not None:
     image = Image.open(uploaded_file)
     st.image(image, caption="Uploaded Image.", use_column_width=True)
@@ -121,7 +124,15 @@ if submit:
     st.subheader("Output")
     for row in response:
         print(row)
+        md = md + " | "+str(row[0])+" | "+str(row[1])+" | "+str(row[2])+" | "+str(row[3])
+        md = md + "\n"
+    st.markdown(md
+,
+unsafe_allow_html=True,
+)
+        # for i in len(row):
+        #     answer = answer + str(i)
+        #     st.header(answer)
         # row.replace("(","")
         # row.replace(",","")
-        answer = answer + str(row[0])
-        st.header(answer)
+        
