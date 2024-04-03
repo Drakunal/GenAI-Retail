@@ -25,7 +25,7 @@ def get_gemini_response_from_image(input,image):
        response = model.generate_content([input,image])
     else:
        response = model.generate_content(image)
-    print(response)
+    print("\n Item identified: ",response.text)
     return response.text
 
 ## Function To Load Google Gemini Model and provide queries as response
@@ -81,7 +81,14 @@ product_id INT AUTO_INCREMENT PRIMARY KEY,
             OR category LIKE '%shampoo%' 
             OR sub_category LIKE '%shampoo%'
         );
-
+        \nExample 5 - In which aisle will I get the product with category or sub category or product name as Toothpaste
+        the SQL command will be something like this 
+            SELECT aisle_number 
+            FROM products 
+            WHERE product_name LIKE '%toothpaste%' 
+            OR category LIKE '%toothpaste%' 
+            OR sub_category LIKE '%toothpaste%'
+        );
     """
 
 
@@ -92,11 +99,11 @@ product_id INT AUTO_INCREMENT PRIMARY KEY,
 st.set_page_config(page_title="SQL LLM")
 st.header("Retail Store LLM")
 
-image_question = "what is the thing in this image? Give one word answer only. Make it a general answer."
+image_question = "what is the thing in this image? Give one word answer only. Make it a general answer. Do not give brand name. "
 # question=st.text_input("Input: ",key="input")
-question = "In which aisle will I get "
+question = "In which aisle will I get the product with category or sub category or product name as "
 uploaded_file = st.file_uploader("Upload an image")
-
+answer = "The item is available at aisle number: "
 image=""  
 
 if uploaded_file is not None:
@@ -114,4 +121,7 @@ if submit:
     st.subheader("Output")
     for row in response:
         print(row)
-        st.header(row)
+        # row.replace("(","")
+        # row.replace(",","")
+        answer = answer + str(row[0])
+        st.header(answer)
