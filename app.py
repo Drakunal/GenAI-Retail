@@ -4,7 +4,7 @@ load_dotenv() ## load all the environment variables
 import streamlit as st
 import os
 import mysql.connector
-
+from PIL import Image
 import google.generativeai as genai
 
 ## Configure GenAI Key
@@ -17,6 +17,16 @@ mydb = mysql.connector.connect(
     password = os.getenv("password"),
     database = "retail_store2"
 )
+
+## Function to load Gemini model and get responses
+def get_gemini_response_from_image(input,image):
+    model=genai.GenerativeModel('gemini-pro-vision')
+    if input!="":
+       response = model.generate_content([input,image])
+    else:
+       response = model.generate_content(image)
+    print(response)
+    return response.text
 
 ## Function To Load Google Gemini Model and provide queries as response
 def get_gemini_response(question,prompt):
@@ -82,15 +92,25 @@ product_id INT AUTO_INCREMENT PRIMARY KEY,
 st.set_page_config(page_title="SQL LLM")
 st.header("Retail Store LLM")
 
-question=st.text_input("Input: ",key="input")
+image_question = "what is the thing in this image? Give one word answer only. Make it a general answer."
+# question=st.text_input("Input: ",key="input")
+question = "In which aisle will I get "
+uploaded_file = st.file_uploader("Upload an image")
 
+image=""  
+
+if uploaded_file is not None:
+    image = Image.open(uploaded_file)
+    st.image(image, caption="Uploaded Image.", use_column_width=True)
 submit=st.button("Ask the question")
 
 # if submit is clicked
 if submit:
-    response=get_gemini_response(question,prompt)
+    response = get_gemini_response_from_image(image_question,image)
+    question = question + response + "?"
+    response = get_gemini_response(question,prompt)
     print(response)
-    response=read_sql_query(response,mydb)
+    response = read_sql_query(response,mydb)
     st.subheader("Output")
     for row in response:
         print(row)
