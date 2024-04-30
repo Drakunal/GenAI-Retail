@@ -1,6 +1,8 @@
 from dotenv import load_dotenv
 load_dotenv() ## load all the environment variables
 
+import numpy as np
+import cv2
 import streamlit as st
 import os
 import mysql.connector
@@ -88,7 +90,8 @@ product_id INT AUTO_INCREMENT PRIMARY KEY,
             WHERE product_name LIKE '%toothpaste%' 
             OR category LIKE '%toothpaste%' 
             OR sub_category LIKE '%toothpaste%'
-        );
+        ); 
+        Never identify humans, only focus on the products portrayed in the image.
     """
 
 
@@ -111,7 +114,21 @@ md = """
 """
 if uploaded_file is not None:
     image = Image.open(uploaded_file)
+    image_np = np.array(image)  # Convert PIL Image to NumPy array
+    face_detect = cv2.CascadeClassifier('haarcascade_frontalface_alt.xml') 
+    face_data = face_detect.detectMultiScale(image_np, 1.3, 5) 
+    # Draw rectangle around the faces which is our region of interest (ROI) 
+    for (x, y, w, h) in face_data: 
+        cv2.rectangle(image_np, (x, y), (x + w, y + h), (0, 255, 0), 2) 
+        roi = image_np[y:y+h, x:x+w] 
+        # applying a gaussian blur over this new rectangle area 
+        roi = cv2.GaussianBlur(roi, (23, 23), 100) 
+        # impose this blurred image on original image to get final image 
+        image_np[y:y+roi.shape[0], x:x+roi.shape[1]] = roi 
+    # Convert NumPy array back to PIL Image for display
+    image = Image.fromarray(image_np)
     st.image(image, caption="Uploaded Image.", use_column_width=True)
+
 submit=st.button("Find your products")
 
 # if submit is clicked
