@@ -132,7 +132,7 @@ if uploaded_file is not None:
 submit=st.button("Find your products")
 
 # if submit is clicked
-if submit:
+if uploaded_file is not None and submit:
     response = get_gemini_response_from_image(image_question,image)
     question = question + response + "?"
     response = get_gemini_response(question,prompt)
