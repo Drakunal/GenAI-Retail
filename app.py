@@ -91,7 +91,7 @@ product_id INT AUTO_INCREMENT PRIMARY KEY,
             OR category LIKE '%toothpaste%' 
             OR sub_category LIKE '%toothpaste%'
         ); 
-        Never identify humans, only focus on the products portrayed in the image.
+        Never identify humans or person or animals, only focus on the products portrayed in the image.
     """
 
 
@@ -102,7 +102,7 @@ product_id INT AUTO_INCREMENT PRIMARY KEY,
 st.set_page_config(page_title="SQL LLM")
 st.header("Retail Store LLM")
 
-image_question = "what is the thing in this image? Give one word answer only. Make it a general answer. Do not give brand name. "
+image_question = "what is the thing in this image? Give one word answer only, never give more than 1 word answer. Make it a general answer. Do not give brand name. Do not answer human, person or animal, identify just the item in the image "
 # question=st.text_input("Input: ",key="input")
 question = "Show me the brand, product name and amount_left_in_inventory and also aisle number where I can get the product with category or sub category or product name as "
 uploaded_file = st.file_uploader("Upload an image")
@@ -127,7 +127,7 @@ if uploaded_file is not None:
         image_np[y:y+roi.shape[0], x:x+roi.shape[1]] = roi 
     # Convert NumPy array back to PIL Image for display
     image = Image.fromarray(image_np)
-    st.image(image, caption="Uploaded Image.", use_column_width=True)
+    st.image(image, caption="Uploaded Image.", width=400)
 
 submit=st.button("Find your products")
 
