@@ -91,6 +91,10 @@ product_id INT AUTO_INCREMENT PRIMARY KEY,
             OR category LIKE '%toothpaste%' 
             OR sub_category LIKE '%toothpaste%'
         ); 
+        if item is in plural form, you can use only the root word of that word to seach for it.
+        Fot items which are a combination of more than 1 word, take the important word and do. Example 1- for lipstick, lipbalm, you can use lip. 
+        Example 2- football, volleyball, and so on, just use ball. remember basket or foot is not important word here, ball is the important word.
+        Example 3- For toothbrush, toothpaste and all similar words, use important word as tooth and the write the SQL query.
         Never identify humans or person or animals, only focus on the products portrayed in the image.
     """
 
@@ -119,10 +123,11 @@ if uploaded_file is not None:
     face_data = face_detect.detectMultiScale(image_np, 1.3, 5) 
     # Draw rectangle around the faces which is our region of interest (ROI) 
     for (x, y, w, h) in face_data: 
-        cv2.rectangle(image_np, (x, y), (x + w, y + h), (0, 255, 0), 2) 
+        cv2.rectangle(image_np, (x, y), (x + w, y + h), (255, 0, 0), 10) 
         roi = image_np[y:y+h, x:x+w] 
         # applying a gaussian blur over this new rectangle area 
-        roi = cv2.GaussianBlur(roi, (23, 23), 100) 
+        roi = cv2.medianBlur(roi, 101)
+
         # impose this blurred image on original image to get final image 
         image_np[y:y+roi.shape[0], x:x+roi.shape[1]] = roi 
     # Convert NumPy array back to PIL Image for display
